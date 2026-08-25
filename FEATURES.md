@@ -60,13 +60,12 @@ History database still stores IPv4 integers only. IPv6 hits appear in the
 | Compatibility manifest | Windows 10 GUID (covers 11) |
 | VS 2015–2022 toolsets | `platform.props` maps v140–v143 |
 | INF starter | `src/pbfilter/pbfilter.inf` |
-| Test-sign helper | `build/windows/testsign.ps1` |
-| BYOVD bypass | `build/windows/byovd.ps1` — persistent DSE bypass using vulnerable signed drivers |
-| Driver load docs | [WINDOWS11.md](WINDOWS11.md) — attestation, test signing, F7, or BYOVD |
+| Test-sign helper | `sign-pbfilter.cmd` / `sign-pbfilter.ps1` next to `pbfilter.sys` |
+| Driver load docs | [WINDOWS11.md](WINDOWS11.md) — **test signing** (no F7 required) |
 
 ## Not added
 
-- Microsoft-signed `pbfilter.sys` (you must attest or disable enforcement)
+- Microsoft-signed `pbfilter.sys` (local use is test signing; attestation is only for stock PCs)
 - SOCKS5 list updates
 - Native IPv6 in `history.db`
 - Settings UI checkbox for `BlockUnknownIPv6` (config key only)

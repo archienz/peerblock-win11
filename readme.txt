@@ -6,10 +6,10 @@ Platform Support
 Upstream PeerBlock supported Windows XP through 8.1 (32- and 64-bit).
 
 This tree adds security hardening and Windows 10/11 (x64) work. The
-packet filter is still a kernel WFP callout and will not load on
-Windows 11 without a Microsoft-attested signature, test signing, or
-temporarily disabling driver signature enforcement (Advanced startup,
-F7). See WINDOWS11.md and SECURITY.md.
+packet filter is a kernel WFP callout. On Windows 11, enable test
+signing and run sign-pbfilter.cmd next to pbfilter.sys (Administrator).
+You do not need to disable driver signature enforcement (F7).
+See README.md, WINDOWS11.md, and SECURITY.md.
 
 
 Source Code
