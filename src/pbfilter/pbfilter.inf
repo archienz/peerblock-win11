@@ -1,0 +1,44 @@
+; PeerBlock WFP callout driver
+; For Windows 10/11 x64. Production load still requires Microsoft attestation
+; signing. Local development uses a test certificate (see WINDOWS11.md).
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = WFPCALLOUTS
+ClassGuid   = {57465043-616C-6C6F-7574-D1F56B2A840D}
+Provider    = %PeerBlock%
+DriverVer   = 08/25/2026,1.2.0.0
+CatalogFile = pbfilter.cat
+PnpLockdown = 1
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+[DefaultInstall.NTamd64]
+CopyFiles = PB.CopyFiles
+
+[DefaultInstall.NTamd64.Services]
+AddService = pbfilter,,PB.Service
+
+[PB.Service]
+DisplayName    = %PB.ServiceName%
+Description    = %PB.ServiceDesc%
+ServiceType    = 1
+StartType      = 3
+ErrorControl   = 1
+ServiceBinary  = %12%\pbfilter.sys
+
+[PB.CopyFiles]
+pbfilter.sys
+
+[SourceDisksNames]
+1 = %DiskName%,,,
+
+[SourceDisksFiles]
+pbfilter.sys = 1
+
+[Strings]
+PeerBlock       = "PeerBlock"
+PB.ServiceName  = "PeerBlock WFP Callout"
+PB.ServiceDesc  = "PeerBlock IP range filtering callout"
+DiskName        = "PeerBlock Driver Disk"

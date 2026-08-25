@@ -1,0 +1,27 @@
+PeerBlock list formats (this fork)
+
+IPv4 P2P (classic)
+  Name:1.2.3.4-1.2.3.8
+
+IPv4 CIDR (new)
+  Name:10.0.0.0/8
+  Name:192.168.1.0/24
+
+IPv6 range (new; brackets required)
+  Name:[2001:db8::1]-[2001:db8::ffff]
+
+IPv6 CIDR (new)
+  Name:[2001:db8::]/32
+  Name:[fe80::]/10
+
+P2B cache is version 4 and stores both IPv4 and IPv6 ranges.
+Older P2B v1–v3 files still load.
+
+When AllowLocal is on, this fork also allows:
+  - local adapter IPv4 and IPv6
+  - IPv6 link-local (fe80::/10)
+  - IPv6 unique local (fc00::/7)
+  - IPv6 loopback (::1)
+
+Optional config key BlockUnknownIPv6 (default false):
+  block IPv6 that is not on the allow or block list.
