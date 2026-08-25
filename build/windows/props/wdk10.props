@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Map old Win7 DDK layout (PB_DDK_DIR) onto a Windows 10/11 WDK install. -->
+  <PropertyGroup>
+    <WindowsTargetPlatformVersion Condition="'$(WindowsTargetPlatformVersion)'==''">10.0.26100.0</WindowsTargetPlatformVersion>
+    <WindowsSdkDir Condition="'$(WindowsSdkDir)'==''">$(ProgramFiles)\Windows Kits\10\</WindowsSdkDir>
+    <WindowsSdkDir Condition="!Exists('$(WindowsSdkDir)Include\$(WindowsTargetPlatformVersion)\km')">$(MSBuildProgramFiles32)\Windows Kits\10\</WindowsSdkDir>
+    <PB_WDK_INC>$(WindowsSdkDir)Include\$(WindowsTargetPlatformVersion)</PB_WDK_INC>
+    <PB_WDK_LIB>$(WindowsSdkDir)Lib\$(WindowsTargetPlatformVersion)</PB_WDK_LIB>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(PB_DDK_DIR)'==''">
+    <PB_DDK_DIR>$(WindowsSdkDir)</PB_DDK_DIR>
+  </PropertyGroup>
+</Project>

@@ -27,6 +27,7 @@
 #define __SQLITE3X_HPP__
 
 #include <string>
+#include <stdexcept>
 #include <boost/utility.hpp>
 
 namespace sqlite3x {

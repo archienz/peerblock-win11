@@ -49,7 +49,10 @@ HINSTANCE hPeerBlockInstance = 0;
 static bool CheckOS() {
 	OSVERSIONINFOEX osv = {0};
 	osv.dwOSVersionInfoSize = sizeof(osv);
+#pragma warning(push)
+#pragma warning(disable: 4996)
 	if(!GetVersionEx((OSVERSIONINFO *)&osv)) return false;
+#pragma warning(pop)
 
 	SYSTEM_INFO si;
 	GetSystemInfo(&si);

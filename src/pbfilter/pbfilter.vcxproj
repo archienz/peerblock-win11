@@ -41,6 +41,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="$(SolutionDir)props\platform.props" />
+  <Import Project="$(SolutionDir)props\wdk10.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_(Vista)|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
@@ -162,7 +163,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(PB_WDK_INC)\km;$(PB_WDK_INC)\shared;$(PB_WDK_INC)\km\crt;$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_X86_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <IgnoreStandardIncludePath>true</IgnoreStandardIncludePath>
       <ExceptionHandling>false</ExceptionHandling>
@@ -186,7 +187,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(PB_WDK_INC)\km;$(PB_WDK_INC)\shared;$(PB_WDK_INC)\km\crt;$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;_AMD64_;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>false</ExceptionHandling>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -210,7 +211,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(PB_WDK_INC)\km;$(PB_WDK_INC)\shared;$(PB_WDK_INC)\km\crt;$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_X86_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <IgnoreStandardIncludePath>true</IgnoreStandardIncludePath>
       <ExceptionHandling>false</ExceptionHandling>
@@ -234,7 +235,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(PB_WDK_INC)\km;$(PB_WDK_INC)\shared;$(PB_WDK_INC)\km\crt;$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;_AMD64_;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>false</ExceptionHandling>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -257,7 +258,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_(Vista)|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(PB_WDK_INC)\km;$(PB_WDK_INC)\shared;$(PB_WDK_INC)\km\crt;$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_X86_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
       <ExceptionHandling>false</ExceptionHandling>
@@ -282,20 +283,20 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_(Vista)|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;_AMD64_;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(PB_WDK_INC)\km;$(PB_WDK_INC)\shared;$(PB_WDK_INC)\km\crt;$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;_AMD64_;WIN64;_WIN64;NTDDI_VERSION=0x0A00000C;_WIN32_WINNT=0x0A00;POOL_NX_OPTIN=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>false</ExceptionHandling>
-      <BufferSecurityCheck>false</BufferSecurityCheck>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <CallingConvention>FastCall</CallingConvention>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>ntoskrnl.lib;hal.lib;fwpkclnt.lib;wdmsec.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(PB_DDK_DIR)\lib\crt\amd64;$(PB_DDK_DIR)\lib\wlh\amd64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ntoskrnl.lib;hal.lib;fwpkclnt.lib;wdmsec.lib;ntstrsafe.lib;BufferOverflowK.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(PB_WDK_LIB)\km\x64;$(PB_DDK_DIR)\lib\crt\amd64;$(PB_DDK_DIR)\lib\wlh\amd64</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <SubSystem>Native</SubSystem>
       <Driver>Driver</Driver>
-      <EntryPointSymbol>DriverEntry</EntryPointSymbol>
+      <EntryPointSymbol>GsDriverEntry</EntryPointSymbol>
       <RandomizedBaseAddress>
       </RandomizedBaseAddress>
       <DataExecutionPrevention>
@@ -307,7 +308,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_(Vista)|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(PB_WDK_INC)\km;$(PB_WDK_INC)\shared;$(PB_WDK_INC)\km\crt;$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_X86_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <IgnoreStandardIncludePath>true</IgnoreStandardIncludePath>
       <ExceptionHandling>false</ExceptionHandling>
@@ -334,7 +335,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_(Vista)|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(PB_WDK_INC)\km;$(PB_WDK_INC)\shared;$(PB_WDK_INC)\km\crt;$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;_AMD64_;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>false</ExceptionHandling>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -343,7 +344,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>ntoskrnl.lib;hal.lib;fwpkclnt.lib;wdmsec.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(PB_DDK_DIR)\lib\crt\amd64;$(PB_DDK_DIR)\lib\wlh\amd64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(PB_WDK_LIB)\km\x64;$(PB_DDK_DIR)\lib\crt\amd64;$(PB_DDK_DIR)\lib\wlh\amd64</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <AssemblyDebug>true</AssemblyDebug>
       <SubSystem>Native</SubSystem>

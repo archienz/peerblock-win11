@@ -12,19 +12,23 @@
     <LinkIncremental Condition="'$(Configuration)'=='Release' Or '$(Configuration)'=='Release_(Vista)'">false</LinkIncremental>
     <!-- VS2015+ usermode only: skip VS2010/XP toolsets and the kernel driver. -->
     <PbUserModeHardening Condition="('$(PlatformToolsetVersion)'&gt;='140' Or '$(VisualStudioVersion)'&gt;='14.0') And '$(MSBuildProjectName)'!='pbfilter'">true</PbUserModeHardening>
-    <PbSpectreMitigation Condition="'$(PbUserModeHardening)'=='true' And ('$(PlatformToolsetVersion)'&gt;='141' Or '$(VisualStudioVersion)'&gt;='15.0')">true</PbSpectreMitigation>
+    <!-- Spectre-mitigated CRT is not in default VS Build Tools; enabling Spectre without
+         Microsoft.VisualStudio.Component.VC.Runtimes.x86.x64.Spectre trips MSB8040. -->
+    <PbSpectreMitigation Condition="'$(PbUserModeHardening)'=='true' And Exists('$(VCToolsInstallDir)lib\spectre\x64')">true</PbSpectreMitigation>
     <SpectreMitigation Condition="'$(PbSpectreMitigation)'=='true'">Spectre</SpectreMitigation>
+    <SpectreMitigation Condition="'$(PbSpectreMitigation)'!='true'">false</SpectreMitigation>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SDLCheck Condition="'$(PbUserModeHardening)'=='true'">true</SDLCheck>
-      <ControlFlowGuard Condition="'$(PbUserModeHardening)'=='true'">true</ControlFlowGuard>
+      <!-- /sdl promotes C4996 (deprecated APIs) to errors across this 2015 codebase. Keep /GS and CFG. -->
+      <SDLCheck Condition="'$(PbUserModeHardening)'=='true'">false</SDLCheck>
+      <ControlFlowGuard Condition="'$(PbUserModeHardening)'=='true'">Guard</ControlFlowGuard>
       <PreprocessorDefinitions Condition="'$(Platform)'=='Win32'">WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Platform)'=='x64'">_WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(PbUserModeHardening)'=='true'">_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(PbUserModeHardening)'=='true'">_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <Lib>

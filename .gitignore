@@ -22,3 +22,5 @@ ipch/
 *.lib
 !thirdparty/**/*.lib
 src/peerblock/version_parsed.h
+*.log
+msbuild*.log

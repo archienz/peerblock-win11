@@ -23,6 +23,13 @@
 #ifndef __STDAFX_H__
 #define __STDAFX_H__
 
+#ifndef _SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS
+#define _SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS
+#endif
+#ifndef _WINSOCK_DEPRECATED_NO_WARNINGS
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#endif
+
 #include <hash_map>
 #include <list>
 #include <vector>

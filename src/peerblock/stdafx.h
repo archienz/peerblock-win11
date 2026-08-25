@@ -33,6 +33,7 @@
 #define _SCL_SECURE_NO_DEPRECATE
 #define _CRT_SECURE_NO_WARNINGS
 #define _SCL_SECURE_NO_WARNINGS
+#define _SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS
 #define _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES 1
 #define _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES_COUNT 1
 #define PB_REPORT_BUGS
@@ -108,7 +109,7 @@ extern "C" {
 #include "tstring.h"
 #include "char_convert.h"
 
-#include <filter.h>
+#include "../pbfilter/filter.h"
 #include "win32_error.h"
 #include "driver.h"
 #if _WIN32_WINNT >= 0x0600

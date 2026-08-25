@@ -57,19 +57,19 @@ static const LPCTSTR g_updateserver=_T("https://www.peerblock.com");	// displaye
 const unsigned long long g_build=boost::lexical_cast<unsigned long long>(BUILDSTR);
 
 #ifdef PB_RELTYPE_STABLE
-static const char *g_updateurl="https://update.peerblock.com/pb_update.php?build="BUILDSTR;
+static const char *g_updateurl="https://update.peerblock.com/pb_update.php?build=" BUILDSTR;
 static const LPCTSTR g_homepage=_T("https://update.peerblock.com/latest-release");		// displayed in web-browser if new program version is found
 #endif
 #ifdef PB_RELTYPE_BETA
-static const char *g_updateurl="https://update.peerblock.com/pb_update_ir.php?build="BUILDSTR;
+static const char *g_updateurl="https://update.peerblock.com/pb_update_ir.php?build=" BUILDSTR;
 static const LPCTSTR g_homepage=_T("https://update.peerblock.com/latest-interim-release");
 #endif
 #ifdef PB_RELTYPE_TEST
-static const char *g_updateurl="https://update.peerblock.com/pb_update_test.php?build="BUILDSTR;
+static const char *g_updateurl="https://update.peerblock.com/pb_update_test.php?build=" BUILDSTR;
 static const LPCTSTR g_homepage=_T("https://update.peerblock.com/latest-test-release");
 #endif
 #ifdef PB_RELTYPE_DEV
-static const char *g_updateurl="https://update.peerblock.com/pb_update_dev.php?build="BUILDSTR;
+static const char *g_updateurl="https://update.peerblock.com/pb_update_dev.php?build=" BUILDSTR;
 static const LPCTSTR g_homepage=_T("https://www.peerblock.com");
 #endif
 

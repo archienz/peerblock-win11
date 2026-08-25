@@ -82,5 +82,7 @@ turn HVCI off if load still fails.
 2. `build\windows\PeerBlock.sln` → **Release_(Vista) | x64**.
 3. Copy `peerblock.exe` and `pbfilter.sys` together. Run elevated.
 
-The driver project still uses the old DDK-style include layout (`PB_DDK_DIR`)
-unless you retarget it to `WindowsKernelModeDriver10.0`.
+`build\windows\props\wdk10.props` maps a standard Windows Kits 10 WDK install
+onto the old `PB_DDK_DIR` include/lib layout. Spectre-mitigated CRT is used
+only if those libs are present (default VS Build Tools often omit them).
+The driver links `BufferOverflowK.lib` and uses `GsDriverEntry` for `/GS`.
