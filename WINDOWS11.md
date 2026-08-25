@@ -24,12 +24,11 @@ Test mode still requires a **signature on the file**. `sign-pbfilter.cmd`
 creates a local `CN=PeerBlock Test` cert, trusts it, and signs `pbfilter.sys`.
 You do not turn off driver signature enforcement.
 
-1. Turn **off** Memory integrity if it is on (Core isolation). Reboot if asked.
-2. Run **`sign-pbfilter.cmd` as Administrator** from the folder that contains
+1. Run **`sign-pbfilter.cmd` as Administrator** from the folder that contains
    `pbfilter.sys` (the driver build copies the script there).
-3. Reboot **once** if the script enabled test signing (`bcdedit /set testsigning on`).
+2. Reboot **once** if the script enabled test signing (`bcdedit /set testsigning on`).
    A *Test Mode* watermark may appear.
-4. Run `peerblock.exe` as Administrator.
+3. Run `peerblock.exe` as Administrator.
 
 Rebuild the `.sys` → run `sign-pbfilter.cmd` again. Starting the app later does
 not require re-signing.
@@ -53,7 +52,6 @@ bcdedit /set testsigning off
 | Symptom | Cause |
 |---------|--------|
 | Windows cannot verify the digital signature / Error 577 / Code 52 | The `.sys` is unsigned, or test signing is off. Run `sign-pbfilter.cmd` as admin and reboot if test mode was just enabled. |
-| A driver cannot load on this device | Memory integrity (HVCI) |
 | Service start fails | Wrong architecture (need **x64** `Release_(Vista)`), or `.sys` not beside the exe |
 
 ## Build (x64 WFP)

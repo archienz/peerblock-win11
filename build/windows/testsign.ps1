@@ -41,15 +41,12 @@ Write-Host @"
 
 Signed: $SysPath
 
-On the target Windows 11 machine, as Administrator:
+Prefer sign-pbfilter.cmd next to pbfilter.sys (creates the cert, trusts it,
+enables test signing if needed). Then reboot if test mode was just turned on,
+and run peerblock.exe as Administrator.
 
-  1. Disable Memory Integrity (Core isolation) if it is on.
-  2. bcdedit /set testsigning on
-  3. Reboot.
-  4. Copy pbfilter.sys next to peerblock.exe and run the app elevated.
-
-Microsoft will not load an unsigned or self-signed kernel driver on a
-normal Windows 11 Home/Pro install. Test signing is the only local path
-without Hardware Dev Center attestation.
+Microsoft will not load an unsigned kernel driver on a stock Windows 11
+Home/Pro install with test signing off. Test signing plus this test cert is
+the local path without Hardware Dev Center attestation.
 
 "@

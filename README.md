@@ -42,17 +42,14 @@ An unsigned driver still fails with error 577 even in test mode. The optional
 
 1. Build **Release_(Vista) | x64** (see [Build](#build)), or copy `peerblock.exe`
    and `pbfilter.sys` into the same folder.
-2. **Turn off Memory integrity** if it is on:
-   Settings → Privacy & security → Windows Security → Device security →
-   Core isolation → Memory integrity → Off. Reboot if Windows asks.
-3. Right-click `sign-pbfilter.cmd` (same folder as `pbfilter.sys`) →
+2. Right-click `sign-pbfilter.cmd` (same folder as `pbfilter.sys`) →
    **Run as administrator**.
    - Trusts a local `CN=PeerBlock Test` certificate
    - Signs `pbfilter.sys`
    - Enables test signing (`bcdedit /set testsigning on`) if it is off
-4. **Reboot once** if the script just turned test signing on (desktop may show
+3. **Reboot once** if the script just turned test signing on (desktop may show
    a *Test Mode* watermark).
-5. Run `peerblock.exe` **as Administrator**.
+4. Run `peerblock.exe` **as Administrator**.
 
 After that, starting PeerBlock does **not** require signing again. Rebuild
 `pbfilter.sys` and re-run `sign-pbfilter.cmd`.
@@ -74,6 +71,7 @@ output folder when copied there by the driver build).
 
 - Advanced startup → F7 / “Disable driver signature enforcement”
 - `bcdedit /set nointegritychecks on`
+- Turning off Memory integrity / Core isolation
 - A Microsoft Hardware Dev Center / WHQL signature (that is only for a
   stock machine with test signing off)
 
