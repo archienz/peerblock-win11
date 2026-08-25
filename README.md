@@ -9,9 +9,23 @@ and is **not** Microsoft-signed.
 
 | Doc | What it covers |
 |-----|----------------|
+| [FEATURES.md](FEATURES.md) | Features added vs 2015 upstream |
 | [SECURITY.md](SECURITY.md) | Every security patch (PB-01 … PB-21) |
 | [WINDOWS11.md](WINDOWS11.md) | Build, **driver signature enforcement**, test signing, attestation |
 | [doc/list-format.txt](doc/list-format.txt) | IPv4 CIDR and IPv6 list syntax |
+
+## Features added (short)
+
+- **Native IPv6 blocking** (upstream always allowed real IPv6)
+- **IPv4 CIDR** and **IPv6 CIDR / bracket ranges** in `.p2p` lists
+- P2B **cache v4** (IPv4 + IPv6); older caches still load
+- **HTTPS-only** list updates (WinHTTP / Schannel); HTTP and `file://` rejected
+- AllowLocal also allows **IPv6 link-local, ULA, loopback**, and adapter IPv6
+- Optional **`BlockUnknownIPv6`** config key (default off)
+- ICMPv6 labeled in the live log
+- Windows 10/11 recognized in the startup log
+
+Details: [FEATURES.md](FEATURES.md). List examples: [doc/list-format.txt](doc/list-format.txt).
 
 ## Why the driver will not start on stock Windows 11
 
