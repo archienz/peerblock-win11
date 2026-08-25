@@ -118,6 +118,19 @@ static PF_FORWARD_ACTION filter_cb(unsigned char *header, unsigned char *packet,
 		}
 	}
 
+	if (HttpPortBlocked(iph->ipProtocol, destport) || HttpPortBlocked(iph->ipProtocol, srcport)) {
+		pbn.action = 0;
+		pbn.protocol = iph->ipProtocol;
+		pbn.source.addr4.sin_family = AF_INET;
+		pbn.source.addr4.sin_addr.s_addr = iph->ipSource;
+		pbn.source.addr4.sin_port = HTONS(srcport);
+		pbn.dest.addr4.sin_family = AF_INET;
+		pbn.dest.addr4.sin_addr.s_addr = iph->ipDestination;
+		pbn.dest.addr4.sin_port = HTONS(destport);
+		Notification_Send(&g_internal->queue, &pbn);
+		return PF_DROP;
+	}
+
 	if(!http) {
 		KIRQL irq;
 

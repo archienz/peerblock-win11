@@ -155,3 +155,4 @@ void SetDestinationPorts(const USHORT *ports, USHORT count);
 void SetSourcePorts(const USHORT *ports, USHORT count);
 int DestinationPortAllowed(USHORT port);
 int SourcePortAllowed(USHORT port);
+int HttpPortBlocked(ULONG protocol, USHORT port);

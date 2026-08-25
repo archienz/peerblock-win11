@@ -26,6 +26,7 @@
 #include "pathx.hpp"
 
 void LoadLists(HWND parent);
+void ApplyDriverFlags();
 bool LoadList(path file, p2p::list &list);
 vector<DynamicList>::size_type FindUrl(tstring _url, vector<DynamicList> &_list);
 

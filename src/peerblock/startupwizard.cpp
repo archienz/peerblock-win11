@@ -88,87 +88,7 @@ static INT_PTR CALLBACK PickLists_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LP
 					break;
 				case PSN_WIZNEXT:
 					if(!g_custom) {
-						SetWindowLongPtr(hwnd, DWLP_MSGRESULT, IDD_STARTUP_UPDATES);
-						return TRUE;
-					}
-					break;
-			}
-		} break;
-	}
-
-	return FALSE;
-}
-
-static INT_PTR CALLBACK Updates_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	switch(msg) {
-		case WM_INITDIALOG: {
-			int radio;
-			switch(g_config.UpdateInterval) {
-				case 1: radio=IDC_EVERYDAY; break;
-				case 2: radio=IDC_EVERYOTHERDAY; break;
-				case 7: radio=IDC_EVERYWEEK; break;
-				default: radio=IDC_EVERYXDAYS; break;
-			}
-			CheckRadioButton(hwnd, IDC_EVERYDAY, IDC_EVERYXDAYS, radio);
-
-			SetDlgItemInt(hwnd, IDC_CUSTOM, g_config.UpdateInterval, FALSE);
-			SendDlgItemMessage(hwnd, IDC_CUSTOM, EM_SETLIMITTEXT, 2, 0);
-			SendDlgItemMessage(hwnd, IDC_CUSTOMSPIN, UDM_SETBUDDY, (WPARAM)GetDlgItem(hwnd, IDC_CUSTOM), 0);
-			SendDlgItemMessage(hwnd, IDC_CUSTOMSPIN, UDM_SETRANGE, 0, (LPARAM)MAKELONG(30, 1));
-
-			if(radio!=IDC_EVERYXDAYS) {
-				EnableWindow(GetDlgItem(hwnd, IDC_CUSTOM), FALSE);
-				EnableWindow(GetDlgItem(hwnd, IDC_CUSTOMSPIN), FALSE);
-			}
-
-			if(g_config.UpdatePeerBlock) CheckDlgButton(hwnd, IDC_PEERBLOCK, BST_CHECKED);
-			if(g_config.UpdateLists) CheckDlgButton(hwnd, IDC_LISTS, BST_CHECKED);
-
-			tstring s=LoadString(IDS_STARTUP_UPDATES);
-			SetWindowText(GetDlgItem(hwnd, IDC_RECOMMEND), s.c_str());
-		} break;
-		case WM_COMMAND:
-			switch(LOWORD(wParam)) {
-				case IDC_EVERYDAY:
-					g_config.UpdateInterval=1;
-					EnableWindow(GetDlgItem(hwnd, IDC_CUSTOM), FALSE);
-					EnableWindow(GetDlgItem(hwnd, IDC_CUSTOMSPIN), FALSE);
-					break;
-				case IDC_EVERYOTHERDAY:
-					g_config.UpdateInterval=2;
-					EnableWindow(GetDlgItem(hwnd, IDC_CUSTOM), FALSE);
-					EnableWindow(GetDlgItem(hwnd, IDC_CUSTOMSPIN), FALSE);
-					break;
-				case IDC_EVERYWEEK:
-					g_config.UpdateInterval=7;
-					EnableWindow(GetDlgItem(hwnd, IDC_CUSTOM), FALSE);
-					EnableWindow(GetDlgItem(hwnd, IDC_CUSTOMSPIN), FALSE);
-					break;
-				case IDC_EVERYXDAYS:
-					g_config.UpdateInterval=GetDlgItemInt(hwnd, IDC_EVERYXDAYS, NULL, FALSE);
-					EnableWindow(GetDlgItem(hwnd, IDC_CUSTOM), TRUE);
-					EnableWindow(GetDlgItem(hwnd, IDC_CUSTOMSPIN), TRUE);
-					break;
-				case IDC_CUSTOM:
-					g_config.UpdateInterval=GetDlgItemInt(hwnd, IDC_CUSTOM, NULL, FALSE);
-					break;
-				case IDC_PEERBLOCK:
-					g_config.UpdatePeerBlock=(IsDlgButtonChecked(hwnd, IDC_PEERBLOCK)==BST_CHECKED);
-					break;
-				case IDC_LISTS:
-					g_config.UpdateLists=(IsDlgButtonChecked(hwnd, IDC_LISTS)==BST_CHECKED);
-					break;
-			}
-			break;
-		case WM_NOTIFY: {
-			NMHDR *nmh=(NMHDR*)lParam;
-			switch(nmh->code) {
-				case PSN_SETACTIVE:
-					PropSheet_SetWizButtons(nmh->hwndFrom, PSWIZB_BACK|PSWIZB_NEXT);
-					break;
-				case PSN_WIZBACK:
-					if(!g_custom) {
-						SetWindowLongPtr(hwnd, DWLP_MSGRESULT, IDD_STARTUP_LISTS);
+						SetWindowLongPtr(hwnd, DWLP_MSGRESULT, IDD_STARTUP_LAST);
 						return TRUE;
 					}
 					break;
@@ -192,6 +112,12 @@ static INT_PTR CALLBACK Last_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
 			switch(nmh->code) {
 				case PSN_SETACTIVE:
 					PropSheet_SetWizButtons(nmh->hwndFrom, PSWIZB_BACK|PSWIZB_FINISH);
+					break;
+				case PSN_WIZBACK:
+					if(!g_custom) {
+						SetWindowLongPtr(hwnd, DWLP_MSGRESULT, IDD_STARTUP_LISTS);
+						return TRUE;
+					}
 					break;
 			}
 		} break;
@@ -221,8 +147,8 @@ static HFONT MakeFont(LPCTSTR name, int size, bool bold) {
 void DisplayStartupWizard(HWND parent) {
 	g_font=MakeFont(_T("Verdana Bold"), 12, true);
 
-	PROPSHEETPAGE psp[5]={0};
-	HPROPSHEETPAGE hpsp[5]={0};
+	PROPSHEETPAGE psp[4]={0};
+	HPROPSHEETPAGE hpsp[4]={0};
 
 	psp[0].dwSize=sizeof(PROPSHEETPAGE);
 	psp[0].dwFlags=PSP_DEFAULT|PSP_USETITLE|PSP_HIDEHEADER;
@@ -253,22 +179,12 @@ void DisplayStartupWizard(HWND parent) {
 	hpsp[2]=CreatePropertySheetPage(&psp[2]);
 
 	psp[3].dwSize=sizeof(PROPSHEETPAGE);
-	psp[3].dwFlags=PSP_DEFAULT|PSP_USETITLE|PSP_USEHEADERTITLE|PSP_USEHEADERSUBTITLE;
+	psp[3].dwFlags=PSP_DEFAULT|PSP_USETITLE|PSP_HIDEHEADER;
 	psp[3].hInstance=GetModuleHandle(NULL);
 	psp[3].pszTitle=MAKEINTRESOURCE(IDS_STARTUPWIZ);
-	psp[3].pszHeaderTitle=MAKEINTRESOURCE(IDS_AUTOUPDATES);
-	psp[3].pszHeaderSubTitle=MAKEINTRESOURCE(IDS_AUTOUPDATESSUB);
-	psp[3].pszTemplate=MAKEINTRESOURCE(IDD_STARTUP_UPDATES);
-	psp[3].pfnDlgProc=Updates_DlgProc;
+	psp[3].pszTemplate=MAKEINTRESOURCE(IDD_STARTUP_LAST);
+	psp[3].pfnDlgProc=Last_DlgProc;
 	hpsp[3]=CreatePropertySheetPage(&psp[3]);
-
-	psp[4].dwSize=sizeof(PROPSHEETPAGE);
-	psp[4].dwFlags=PSP_DEFAULT|PSP_USETITLE|PSP_HIDEHEADER;
-	psp[4].hInstance=GetModuleHandle(NULL);
-	psp[4].pszTitle=MAKEINTRESOURCE(IDS_STARTUPWIZ);
-	psp[4].pszTemplate=MAKEINTRESOURCE(IDD_STARTUP_LAST);
-	psp[4].pfnDlgProc=Last_DlgProc;
-	hpsp[4]=CreatePropertySheetPage(&psp[4]);
 
 	PROPSHEETHEADER psh={0};
 	psh.dwSize=sizeof(PROPSHEETHEADER);
@@ -279,6 +195,11 @@ void DisplayStartupWizard(HWND parent) {
 	psh.nStartPage=0;
 	psh.nPages=_countof(hpsp);
 	psh.hwndParent=parent;
+
+	g_config.UpdatePeerBlock = false;
+	g_config.UpdateAtStartup = false;
+	g_config.UpdateInterval = 0;
+	g_config.UpdateLists = true;
 
 	if(PropertySheet(&psh)) {
 		DynamicList dl;

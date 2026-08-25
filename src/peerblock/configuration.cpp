@@ -37,13 +37,13 @@ Configuration::Configuration()
 	: Block(true)
 	, AllowLocal(true)
 	, BlockUnknownIPv6(false)
-	, UpdatePeerBlock(true)
+	, UpdatePeerBlock(false)
 	, IgnoreListUpdateLimit(false)
 	, UpdateLists(true)
-	, UpdateAtStartup(true)
+	, UpdateAtStartup(false)
 	, ShowSplash(false)
 	, WindowHidden(false)
-	, UpdateInterval(2)
+	, UpdateInterval(0)
 	, LogSize(12)
 	, LastUpdate(0)
 	, LastArchived(0)
@@ -679,6 +679,10 @@ bool Configuration::Load()
 		GetChild(updates, "UpdateLists", this->UpdateLists);
 		GetChild(updates, "UpdateAtStartup", this->UpdateAtStartup);
 		GetChild(updates, "UpdateInterval", this->UpdateInterval);
+
+		this->UpdatePeerBlock = false;
+		this->UpdateAtStartup = false;
+		this->UpdateInterval = 0;
 		GetChild(updates, "UpdateCountdown", this->UpdateCountdown);
 		GetChild(updates, "IgnoreListUpdateLimit", this->IgnoreListUpdateLimit);
 

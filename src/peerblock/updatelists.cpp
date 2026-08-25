@@ -53,25 +53,7 @@ extern TraceLog g_tlog;
 #define BUILDSTR STRINGIFY(BUILDTYPE) STRINGIFY(BUILDDATE) STRINGIFY(PB_VER_BUILDNUM)
 
 static const char *g_agent="PeerBlock/" STRINGIFY(PB_VER_MAJOR) "." STRINGIFY(PB_VER_MINOR) "." STRINGIFY(PB_VER_BUGFIX) "." STRINGIFY(PB_VER_BUILDNUM);
-static const LPCTSTR g_updateserver=_T("https://www.peerblock.com");	// displayed in Update UI
 const unsigned long long g_build=boost::lexical_cast<unsigned long long>(BUILDSTR);
-
-#ifdef PB_RELTYPE_STABLE
-static const char *g_updateurl="https://update.peerblock.com/pb_update.php?build=" BUILDSTR;
-static const LPCTSTR g_homepage=_T("https://update.peerblock.com/latest-release");		// displayed in web-browser if new program version is found
-#endif
-#ifdef PB_RELTYPE_BETA
-static const char *g_updateurl="https://update.peerblock.com/pb_update_ir.php?build=" BUILDSTR;
-static const LPCTSTR g_homepage=_T("https://update.peerblock.com/latest-interim-release");
-#endif
-#ifdef PB_RELTYPE_TEST
-static const char *g_updateurl="https://update.peerblock.com/pb_update_test.php?build=" BUILDSTR;
-static const LPCTSTR g_homepage=_T("https://update.peerblock.com/latest-test-release");
-#endif
-#ifdef PB_RELTYPE_DEV
-static const char *g_updateurl="https://update.peerblock.com/pb_update_dev.php?build=" BUILDSTR;
-static const LPCTSTR g_homepage=_T("https://www.peerblock.com");
-#endif
 
 static const UINT TIMER_COUNTDOWN=1;
 static unsigned short g_countdown;
@@ -291,12 +273,10 @@ public:
 	{
 		TRACEV("[UpdateThread] [_Process]  > Entering routine.");
 		unsigned short total=0;
-		bool updatepb=false;
 		bool updatelists=false;
 
 		set<int> errors;
 
-		if(g_config.UpdatePeerBlock) total+=1;
 		if(g_config.UpdateLists)
 		{
 			for(vector<DynamicList>::size_type i=0; i<g_config.DynamicLists.size(); i++) {
@@ -322,52 +302,6 @@ public:
 			}
 
 
-
-			///////////////////////////////////////////////
-			/// Update PeerBlock
-
-			if(g_config.UpdatePeerBlock)
-			{
-				TRACEI("[UpdateThread] [_Process]    updating peerblock");
-				TCHAR buf[128];
-				swprintf_s(buf, _countof(buf), L"[UpdateThread] [_Process]    update url:[%S]", g_updateurl);
-				TRACEBUFI(buf);
-				swprintf_s(buf, _countof(buf), L"[UpdateThread] [_Process]    homepage url:[%s]", g_homepage);
-				TRACEBUFI(buf);
-				swprintf_s(buf, _countof(buf), L"[UpdateThread] [_Process]    agent string:[%S]", g_agent);
-				TRACEBUFI(buf);
-
-				HandleData *data=new HandleData(this);
-				data->url = g_updateurl;
-				hdata.push_back(data);
-				TRACEV("[UpdateThread] [_Process]    queued PeerBlock update download");
-
-				if(list)
-				{
-					TRACEV("[UpdateThread] [_Process]    list found");
-					tstring text=LoadString(IDS_UPDATEPB);
-
-					lvi.pszText=(LPTSTR)text.c_str();
-					ListView_InsertItem(list, &lvi);
-
-					lvi.iSubItem=1;
-					lvi.pszText=(LPTSTR)g_updateserver;
-					ListView_SetItem(list, &lvi);
-
-					lvi.iSubItem=2;
-					text=LoadString(data?IDS_CONNECTING:IDS_ERRCURL);
-					lvi.pszText=(LPTSTR)text.c_str();
-					ListView_SetItem(list, &lvi);
-
-					if(data) data->index=lvi.iItem;
-
-					lvi.iItem++;
-				}
-			}
-			else
-			{
-				TRACEI("[UpdateThread] [_Process]    not updating peerblock, as per config");
-			}
 
 			///////////////////////////////////////////////
 			/// Update dynamic lists
@@ -686,49 +620,7 @@ public:
 										}
 										else
 										{
-											TRACEV("[UpdateThread] [_Process]    data is not a list, must be program update");
-											try
-											{
-												unsigned long long b=boost::lexical_cast<unsigned long long>(build);
-
-												if(list)
-												{
-													if (b > g_build)
-													{
-														TRACES("[UpdateThread] [_Process]    found list var; new program version found");
-														updatepb = true;
-													}
-													else
-													{
-														TRACEI("[UpdateThread] [_Process]    found list var; no new program version found");
-														updatepb = false;
-													}
-													const tstring str=LoadString((b>g_build)?IDS_UPDATEAVAILABLE:IDS_NONEAVAILABLE);
-
-													lvi.iItem=data->index;
-													lvi.iSubItem=2;
-													lvi.pszText=(LPTSTR)str.c_str();
-													ListView_SetItem(list, &lvi);
-												}
-												else
-												{
-													if (b > g_build)
-													{
-														TRACES("[UpdateThread] [_Process]    no list var; new program version found");
-														updatepb = true;
-													}
-													else
-													{
-														TRACEI("[UpdateThread] [_Process]    no list var; no new program version found");
-														updatepb = false;
-													}
-												}
-											}
-											catch(...)
-											{
-												TRACEW("[UpdateThread] [_Process]    *  caught exception; ignoring");
-												// keep going...
-											}
+											TRACEI("[UpdateThread] [_Process]    ignoring non-list download (program auto-update removed)");
 										}
 									}
 									else if(code==304)
@@ -1000,12 +892,6 @@ public:
 
 			for (vector<HandleData *>::size_type i = 0; i < hdata.size(); i++) {
 				delete hdata[i];
-			}
-
-			if(!aborted && updatepb && MessageBox(hwnd, IDS_PBUPDATETEXT, IDS_PBUPDATE, MB_ICONQUESTION|MB_YESNO)==IDYES)
-			{
-				TRACEI("[UpdateThread] [_Process]    program update found; showing homepage");
-				ShellExecute(NULL, NULL, g_homepage, NULL, NULL, SW_SHOWNORMAL);
 			}
 		}
 
@@ -1344,9 +1230,9 @@ int UpdateLists(HWND parent)
 
 	int ret=0;
 
-	if (!g_config.UpdateLists && !g_config.UpdatePeerBlock)
+	if (!g_config.UpdateLists)
 	{
-		TRACEI("[UpdateLists]    neither UpdateLists nor UpdatePeerBlock is enabled, so nothing to update");
+		TRACEI("[UpdateLists]    UpdateLists is not enabled, so nothing to update");
 	}
 	else if(g_updater==NULL)
 	{

@@ -23,6 +23,7 @@
 #include "stdafx.h"
 #include "resource.h"
 #include "p2p/exception.hpp"
+#include "mainproc.h"
 
 #include <mutex>
 using namespace std;
@@ -542,6 +543,19 @@ static bool GenCache(HWND hwnd, p2p::list &work) {
 	}
 }
 
+void ApplyDriverFlags()
+{
+	if (!g_filter)
+		return;
+
+	ULONG flags = 0;
+	if (g_config.BlockUnknownIPv6)
+		flags |= PB_FLAG_BLOCK_UNKNOWN_V6;
+	if (g_config.PortSet.IsHttpBlocked())
+		flags |= PB_FLAG_BLOCK_HTTP;
+	g_filter->setflags(flags);
+}
+
 void LoadLists(HWND parent) {
 
 	TRACEI("[LoadLists]  > Entering routine.");
@@ -606,12 +620,7 @@ void LoadLists(HWND parent) {
 	if (allow.size() > 0 || allow.size6() > 0)
 		g_filter->setranges(allow, false);
 	g_filter->setranges(block, true);
-	{
-		ULONG flags = 0;
-		if (g_config.BlockUnknownIPv6)
-			flags |= PB_FLAG_BLOCK_UNKNOWN_V6;
-		g_filter->setflags(flags);
-	}
+	ApplyDriverFlags();
 	TRACEI("[LoadLists]    driver ranges set");
 
 	SendMessage(g_tabs[0].Tab, WM_LOG_RANGES, 0, (UINT)g_filter->blockcount());

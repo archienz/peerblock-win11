@@ -379,6 +379,13 @@
     <ClInclude Include="internal.h" />
     <ClInclude Include="notifyqueue.h" />
   </ItemGroup>
+  <ItemDefinitionGroup>
+    <PostBuildEvent>
+      <Command>copy /Y "$(SolutionDir)sign-pbfilter.cmd" "$(OutDir)"
+copy /Y "$(SolutionDir)sign-pbfilter.ps1" "$(OutDir)"</Command>
+      <Message>Copy optional test-sign scripts next to pbfilter.sys</Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

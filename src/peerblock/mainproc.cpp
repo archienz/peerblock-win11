@@ -181,6 +181,7 @@ void SetBlockHttp(bool _block, unsigned int _time)
 	g_config.PortSet.AllowHttp = !_block;
 	g_config.PortSet.Merge();
 	g_filter->setdestinationports(g_config.PortSet.DestinationPorts);
+	ApplyDriverFlags();
 
 	// set icon to match our new state
 	if (g_config.Block)
@@ -324,11 +325,6 @@ static void Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 				}
 			}
 			break;
-		case ID_TRAY_CHECKFORUPDATES:
-			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Check for updates' item");
-			SendMessage(g_hLogDlg, WM_CHECKFORUPDATES, NULL, NULL);
-			break;
-
 		case ID_TRAY_HELP:
 			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Help' item");
 			ShellExecute(NULL, NULL, _T("http://www.peerblock.com/quick-guide"), NULL, NULL, SW_SHOWNORMAL);
@@ -552,6 +548,7 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	g_config.PortSet.Merge();
 	g_filter->setdestinationports(g_config.PortSet.DestinationPorts);
 	g_filter->setsourceports(g_config.PortSet.SourcePorts);
+	ApplyDriverFlags();
 
 	TRACEI("[mainproc] [Main_OnInitDialog]    getting tabs");
 	HWND tabs=GetDlgItem(hwnd, IDC_TABS);
@@ -569,24 +566,19 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 		FitTabChild(tabs, g_tabs[i].Tab);
 	}
 
-	if( firsttime && !g_config.UpdateAtStartup && g_config.LastUpdate < g_config.LastStarted )
+	if (firsttime && !g_config.DynamicLists.empty())
 	{
-		TRACEI("[mainproc] [Main_OnInitDialog]    updating lists for firsttime");
+		TRACEI("[mainproc] [Main_OnInitDialog]    first run: downloading selected lists");
 
 		{
 			mutex::scoped_lock lock(g_lastupdatelock);
 			UpdateLists(g_tabs[0].Tab);
 		}
-
-		SendMessage(g_tabs[0].Tab, WM_TIMER, TIMER_UPDATE, 0);
 	}
 
-	if (!firsttime)
-	{
-		TRACEI("[mainproc] [Main_OnInitDialog]    loading lists");
-		LoadLists(hwnd);
-		TRACES("[mainproc] [Main_OnInitDialog]    Lists loaded.");
-	}
+	TRACEI("[mainproc] [Main_OnInitDialog]    loading lists");
+	LoadLists(hwnd);
+	TRACES("[mainproc] [Main_OnInitDialog]    Lists loaded.");
 
 	SendMessage(g_tabs[0].Tab, WM_LOG_HOOK, 0, g_config.Block?TRUE:FALSE);
 
@@ -647,18 +639,7 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	if(g_config.WindowHidden)
 		SetProcessWorkingSetSize(GetCurrentProcess(), (size_t)-1, (size_t)-1);
 
-	if (g_config.UpdateAtStartup && g_config.LastUpdate < g_config.LastStarted )
-	{
-		TRACEI("[mainproc] [Main_OnInitDialog]    updating at startup");
-
-		{
-			mutex::scoped_lock lock(g_lastupdatelock);
-			UpdateLists(hwnd); // needs internet connection
-		}
-
-		LoadLists(hwnd);
-	}
-	else if(g_filter) // HACK: This should allow us to block at startup, even if we don't update
+	if(g_filter) // HACK: This should allow us to block at startup, even if we don't update
 	{
 		TRACEI("[mainproc] [Main_OnInitDialog]    not updating at startup");
 		p2p::list allow;

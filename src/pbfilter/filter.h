@@ -62,6 +62,7 @@
 #define IOCTL_PEERBLOCK_SETFLAGS			CTL_CODE_PEERBLOCK(7, FILE_WRITE_DATA)
 
 #define PB_FLAG_BLOCK_UNKNOWN_V6			0x00000001UL
+#define PB_FLAG_BLOCK_HTTP				0x00000002UL
 
 //
 // Name that Win32 front end will use to open the PeerBlock device

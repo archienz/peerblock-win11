@@ -405,3 +405,14 @@ int DestinationPortAllowed(USHORT port) {
 	KeReleaseSpinLock(&g_internal->destinationportslock, irq);
 	return allowed;
 }
+
+int HttpPortBlocked(ULONG protocol, USHORT port)
+{
+	if (!g_internal || (g_internal->flags & PB_FLAG_BLOCK_HTTP) == 0)
+		return 0;
+	if (port != 80 && port != 443)
+		return 0;
+	if (protocol == IPPROTO_TCP || protocol == IPPROTO_UDP)
+		return 1;
+	return 0;
+}

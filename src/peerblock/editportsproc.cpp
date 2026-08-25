@@ -54,6 +54,7 @@ static void SavePorts(HWND hwnd)
 	g_config.PortSet.Merge();
 	g_filter->setdestinationports(g_config.PortSet.DestinationPorts);
 	g_filter->setsourceports(g_config.PortSet.SourcePorts);
+	ApplyDriverFlags();
 }
 
 

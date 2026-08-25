@@ -311,23 +311,6 @@ INT_PTR CALLBACK SettingsSecond_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 					case IDC_SOCKS5:
 						g_config.UpdateProxyType=(IsDlgButtonChecked(hwnd, IDC_HTTP)==BST_CHECKED)?CURLPROXY_HTTP:CURLPROXY_SOCKS5;
 						break;
-					case IDC_AUTOUPDATE: {
-						const BOOL b=(IsDlgButtonChecked(hwnd, IDC_AUTOUPDATE)==BST_CHECKED);
-
-						EnableWindow(GetDlgItem(hwnd, IDC_AUTOUPDATETIMESPIN), b);
-						EnableWindow(GetDlgItem(hwnd, IDC_AUTOUPDATETIME), b);
-
-						if(b) {
-							if(GetWindowTextLength(GetDlgItem(hwnd, IDC_AUTOUPDATETIME))>0)
-								g_config.UpdateInterval=(unsigned short)GetDlgItemInt(hwnd, IDC_AUTOUPDATETIME, NULL, FALSE);
-							else SetDlgItemInt(hwnd, IDC_AUTOUPDATETIME, 2, FALSE);
-						}
-						else g_config.UpdateInterval=0;
-					} break;
-					case IDC_AUTOUPDATETIME:
-						if(HIWORD(wParam)==EN_CHANGE)
-							g_config.UpdateInterval=(unsigned short)GetDlgItemInt(hwnd, IDC_AUTOUPDATETIME, NULL, FALSE);
-						break;
 					case IDC_AUTOCLOSE: {
 						const BOOL b=(IsDlgButtonChecked(hwnd, IDC_AUTOCLOSE)==BST_CHECKED);
 
@@ -345,30 +328,6 @@ INT_PTR CALLBACK SettingsSecond_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 						if(HIWORD(wParam)==EN_CHANGE)
 							g_config.UpdateCountdown=(unsigned short)GetDlgItemInt(hwnd, IDC_AUTOCLOSETIME, NULL, FALSE);
 						break;
-					case IDC_CHECKPB:
-					case IDC_CHECKLISTS: {
-						const bool ba=g_config.UpdatePeerBlock=(IsDlgButtonChecked(hwnd, IDC_CHECKPB)==BST_CHECKED);
-						const bool bb=g_config.UpdateLists=(IsDlgButtonChecked(hwnd, IDC_CHECKLISTS)==BST_CHECKED);
-
-						BOOL b=ba||bb;
-
-						EnableWindow(GetDlgItem(hwnd, IDC_AUTOUPDATE), b);
-						EnableWindow(GetDlgItem(hwnd, IDC_USEPROXY), b);
-						EnableWindow(GetDlgItem(hwnd, IDC_AUTOCLOSE), b);
-
-						b=(ba||bb)&&(IsDlgButtonChecked(hwnd, IDC_AUTOUPDATE)==BST_CHECKED);
-						EnableWindow(GetDlgItem(hwnd, IDC_AUTOUPDATETIMESPIN), b);
-						EnableWindow(GetDlgItem(hwnd, IDC_AUTOUPDATETIME), b);
-
-						b=(ba||bb)&&(IsDlgButtonChecked(hwnd, IDC_USEPROXY)==BST_CHECKED);
-						EnableWindow(GetDlgItem(hwnd, IDC_PROXYHOST), b);
-						EnableWindow(GetDlgItem(hwnd, IDC_HTTP), b);
-						EnableWindow(GetDlgItem(hwnd, IDC_SOCKS5), b);
-
-						b=(ba||bb)&&(IsDlgButtonChecked(hwnd, IDC_AUTOCLOSE)==BST_CHECKED);
-						EnableWindow(GetDlgItem(hwnd, IDC_AUTOCLOSETIMESPIN), b);
-						EnableWindow(GetDlgItem(hwnd, IDC_AUTOCLOSETIME), b);
-					} break;
 					case IDC_HIDETRAY:
 						g_config.StayHidden=(IsDlgButtonChecked(hwnd, IDC_HIDETRAY)==BST_CHECKED);
 						if(g_config.StayHidden && g_trayactive) {
@@ -388,9 +347,6 @@ INT_PTR CALLBACK SettingsSecond_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 					case IDC_ONTOP:
 						g_config.AlwaysOnTop=(IsDlgButtonChecked(hwnd, IDC_ONTOP)==BST_CHECKED);
 						SetWindowPos(g_main, g_config.AlwaysOnTop?HWND_TOPMOST:HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
-						break;
-					case IDC_UPDATE_AT_STARTUP:
-						g_config.UpdateAtStartup=(IsDlgButtonChecked(hwnd, IDC_UPDATE_AT_STARTUP) == BST_CHECKED);
 						break;
 					case IDC_NOTIFY: {
 						BOOL e=(IsDlgButtonChecked(hwnd, IDC_NOTIFY)==BST_CHECKED);
@@ -449,10 +405,6 @@ INT_PTR CALLBACK SettingsSecond_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 				}
 				break;
 			case WM_INITDIALOG: {
-				SendDlgItemMessage(hwnd, IDC_AUTOUPDATETIME, EM_SETLIMITTEXT, 2, 0);
-				SendDlgItemMessage(hwnd, IDC_AUTOUPDATETIMESPIN, UDM_SETBUDDY, (WPARAM)GetDlgItem(hwnd, IDC_AUTOUPDATETIME), 0);
-				SendDlgItemMessage(hwnd, IDC_AUTOUPDATETIMESPIN, UDM_SETRANGE, 0, (LPARAM)MAKELONG(99, 1));
-
 				SendDlgItemMessage(hwnd, IDC_AUTOCLOSETIME, EM_SETLIMITTEXT, 2, 0);
 				SendDlgItemMessage(hwnd, IDC_AUTOCLOSETIMESPIN, UDM_SETBUDDY, (WPARAM)GetDlgItem(hwnd, IDC_AUTOCLOSETIME), 0);
 				SendDlgItemMessage(hwnd, IDC_AUTOCLOSETIMESPIN, UDM_SETRANGE, 0, (LPARAM)MAKELONG(99, 0));
@@ -466,47 +418,21 @@ INT_PTR CALLBACK SettingsSecond_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 				if(g_config.StayHidden) CheckDlgButton(hwnd, IDC_HIDETRAY, BST_CHECKED);
 				if(g_config.HideOnClose) CheckDlgButton(hwnd, IDC_HIDEONCLOSE, BST_CHECKED);
 				if(g_config.AlwaysOnTop) CheckDlgButton(hwnd, IDC_ONTOP, BST_CHECKED);
-				if(g_config.UpdateAtStartup) CheckDlgButton(hwnd, IDC_UPDATE_AT_STARTUP, BST_CHECKED);
-
-				if(g_config.UpdateInterval>0) {
-					CheckDlgButton(hwnd, IDC_AUTOUPDATE, BST_CHECKED);
-					SetDlgItemInt(hwnd, IDC_AUTOUPDATETIME, g_config.UpdateInterval, FALSE);
-				}
 
 				if(g_config.UpdateProxy.length()>0) {
 					CheckDlgButton(hwnd, IDC_USEPROXY, BST_CHECKED);
 					SetDlgItemText(hwnd, IDC_PROXYHOST, g_config.UpdateProxy.c_str());
 					CheckDlgButton(hwnd, (g_config.UpdateProxyType==CURLPROXY_HTTP)?IDC_HTTP:IDC_SOCKS5, BST_CHECKED);
+					EnableWindow(GetDlgItem(hwnd, IDC_PROXYHOST), TRUE);
+					EnableWindow(GetDlgItem(hwnd, IDC_HTTP), TRUE);
+					EnableWindow(GetDlgItem(hwnd, IDC_SOCKS5), TRUE);
 				}
 
 				if(g_config.UpdateCountdown>=0) {
 					CheckDlgButton(hwnd, IDC_AUTOCLOSE, BST_CHECKED);
 					SetDlgItemInt(hwnd, IDC_AUTOCLOSETIME, g_config.UpdateCountdown, FALSE);
-				}
-
-				if(g_config.UpdatePeerBlock || g_config.UpdateLists) {
-					if(g_config.UpdatePeerBlock) CheckDlgButton(hwnd, IDC_CHECKPB, BST_CHECKED);
-					if(g_config.UpdateLists) CheckDlgButton(hwnd, IDC_CHECKLISTS, BST_CHECKED);
-
-					EnableWindow(GetDlgItem(hwnd, IDC_AUTOUPDATE), TRUE);
-					EnableWindow(GetDlgItem(hwnd, IDC_USEPROXY), TRUE);
-					EnableWindow(GetDlgItem(hwnd, IDC_AUTOCLOSE), TRUE);
-
-					if(g_config.UpdateInterval>0) {
-						EnableWindow(GetDlgItem(hwnd, IDC_AUTOUPDATETIMESPIN), TRUE);
-						EnableWindow(GetDlgItem(hwnd, IDC_AUTOUPDATETIME), TRUE);
-					}
-
-					if(g_config.UpdateProxy.length()>0) {
-						EnableWindow(GetDlgItem(hwnd, IDC_PROXYHOST), TRUE);
-						EnableWindow(GetDlgItem(hwnd, IDC_HTTP), TRUE);
-						EnableWindow(GetDlgItem(hwnd, IDC_SOCKS5), TRUE);
-					}
-
-					if(g_config.UpdateCountdown>=0) {
-						EnableWindow(GetDlgItem(hwnd, IDC_AUTOCLOSETIMESPIN), TRUE);
-						EnableWindow(GetDlgItem(hwnd, IDC_AUTOCLOSETIME), TRUE);
-					}
+					EnableWindow(GetDlgItem(hwnd, IDC_AUTOCLOSETIMESPIN), TRUE);
+					EnableWindow(GetDlgItem(hwnd, IDC_AUTOCLOSETIME), TRUE);
 				}
 
 				HKEY key;
@@ -554,10 +480,6 @@ INT_PTR CALLBACK SettingsSecond_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 				GetClientRect(hwnd, &rc);
 				SendMessage(hwnd, WM_SIZE, 0, MAKELONG(rc.right-rc.left, rc.bottom-rc.top));
 			} break;
-
-            case WM_REFRESH_AUTOUPDATE: {
-                SetDlgItemInt(hwnd, IDC_AUTOUPDATETIME, g_config.UpdateInterval, FALSE);
-            } break;
 
 			HANDLE_MSG(hwnd, WM_SIZE, SettingsProc_OnSize);
 		}

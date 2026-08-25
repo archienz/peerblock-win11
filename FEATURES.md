@@ -61,7 +61,8 @@ History database still stores IPv4 integers only. IPv6 hits appear in the
 | VS 2015–2022 toolsets | `platform.props` maps v140–v143 |
 | INF starter | `src/pbfilter/pbfilter.inf` |
 | Test-sign helper | `build/windows/testsign.ps1` |
-| Driver load docs | [WINDOWS11.md](WINDOWS11.md) — attestation, test signing, or F7 DSE |
+| BYOVD bypass | `build/windows/byovd.ps1` — persistent DSE bypass using vulnerable signed drivers |
+| Driver load docs | [WINDOWS11.md](WINDOWS11.md) — attestation, test signing, F7, or BYOVD |
 
 ## Not added
 

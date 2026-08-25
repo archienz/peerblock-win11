@@ -84,6 +84,9 @@ void pbfilter::install_callout() {
 	monitor.subLayerKey = PB_MONITOR_SUBLAYER;
 	monitor.displayData.name = L"PeerBlock Sub layer";
 	monitor.displayData.description = L"PeerBlock Sub layer";
+	monitor.weight = 0xFFFF;
+
+	static UINT64 s_filter_weight = MAXUINT64;
 
 	FWPM_FILTER0 ofilter4 = {0};
 	ofilter4.filterKey = PBWFP_CONNECT_FILTER_V4;
@@ -93,7 +96,8 @@ void pbfilter::install_callout() {
 	ofilter4.action.type = FWP_ACTION_CALLOUT_UNKNOWN; // The callout may return block or permit.
 	ofilter4.action.calloutKey = PBWFP_CONNECT_CALLOUT_V4;
 	ofilter4.subLayerKey = PB_MONITOR_SUBLAYER;
-	ofilter4.weight.type = FWP_EMPTY; // auto-weight.
+	ofilter4.weight.type = FWP_UINT64;
+	ofilter4.weight.uint64 = &s_filter_weight;
 
 	FWPM_FILTER0 ifilter4 = {0};
 	ifilter4.filterKey = PBWFP_ACCEPT_FILTER_V4;
@@ -103,7 +107,8 @@ void pbfilter::install_callout() {
 	ifilter4.action.type = FWP_ACTION_CALLOUT_UNKNOWN; // The callout may return block or permit.
 	ifilter4.action.calloutKey = PBWFP_ACCEPT_CALLOUT_V4;
 	ifilter4.subLayerKey = PB_MONITOR_SUBLAYER;
-	ifilter4.weight.type = FWP_EMPTY; // auto-weight.
+	ifilter4.weight.type = FWP_UINT64;
+	ifilter4.weight.uint64 = &s_filter_weight;
 
 	FWPM_FILTER0 ofilter6 = {0};
 	ofilter6.filterKey = PBWFP_CONNECT_FILTER_V6;
@@ -113,7 +118,8 @@ void pbfilter::install_callout() {
 	ofilter6.action.type = FWP_ACTION_CALLOUT_UNKNOWN; // The callout may return block or permit.
 	ofilter6.action.calloutKey = PBWFP_CONNECT_CALLOUT_V6;
 	ofilter6.subLayerKey = PB_MONITOR_SUBLAYER;
-	ofilter6.weight.type = FWP_EMPTY; // auto-weight.
+	ofilter6.weight.type = FWP_UINT64;
+	ofilter6.weight.uint64 = &s_filter_weight;
 
 	FWPM_FILTER0 ifilter6 = {0};
 	ifilter6.filterKey = PBWFP_ACCEPT_FILTER_V6;
@@ -123,7 +129,8 @@ void pbfilter::install_callout() {
 	ifilter6.action.type = FWP_ACTION_CALLOUT_UNKNOWN; // The callout may return block or permit.
 	ifilter6.action.calloutKey = PBWFP_ACCEPT_CALLOUT_V6;
 	ifilter6.subLayerKey = PB_MONITOR_SUBLAYER;
-	ifilter6.weight.type = FWP_EMPTY; // auto-weight.
+	ifilter6.weight.type = FWP_UINT64;
+	ifilter6.weight.uint64 = &s_filter_weight;
 
 	//wfp_session session(ses);
 

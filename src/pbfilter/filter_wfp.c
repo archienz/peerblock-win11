@@ -140,11 +140,25 @@ static void FillAddrs(PBNOTIFICATION *pbn, ULONG srcAddr, const IN6_ADDR *srcAdd
 	}
 }
 
+static BOOLEAN PortExempt(ULONG protocol, USHORT localPort, USHORT remotePort)
+{
+	if (protocol != IPPROTO_TCP && protocol != IPPROTO_UDP)
+		return FALSE;
+	if (DestinationPortAllowed(remotePort))
+		return TRUE;
+	if (protocol == IPPROTO_TCP && SourcePortAllowed(localPort))
+		return TRUE;
+	return FALSE;
+}
+
 static ULONG RealClassifyV4Connect(ULONG protocol, ULONG localAddr, const IN6_ADDR *localAddr6, USHORT localPort, ULONG remoteAddr, const IN6_ADDR *remoteAddr6, USHORT remotePort) {
 	PBNOTIFICATION pbn = {0};
 
-	if(protocol == IPPROTO_TCP && (DestinationPortAllowed(remotePort) || SourcePortAllowed(localPort))) {
+	if (PortExempt(protocol, localPort, remotePort)) {
 		pbn.action = 2;
+	}
+	else if (HttpPortBlocked(protocol, remotePort)) {
+		pbn.action = 0;
 	}
 	else {
 		pbn.action = CheckRanges(&pbn, remoteAddr);
@@ -186,8 +200,11 @@ static NTSTATUS ClassifyV4Connect(const FWPS_INCOMING_VALUES0* inFixedValues, co
 static ULONG RealClassifyV4Accept(ULONG protocol, ULONG localAddr, const IN6_ADDR *localAddr6, USHORT localPort, ULONG remoteAddr, const IN6_ADDR *remoteAddr6, USHORT remotePort) {
 	PBNOTIFICATION pbn = {0};
 
-	if (protocol == IPPROTO_TCP && (DestinationPortAllowed(remotePort) || SourcePortAllowed(localPort))) {
+	if (PortExempt(protocol, localPort, remotePort)) {
 		pbn.action = 2;
+	}
+	else if (HttpPortBlocked(protocol, remotePort)) {
+		pbn.action = 0;
 	}
 	else {
 		pbn.action = CheckRanges(&pbn, remoteAddr);
@@ -256,8 +273,10 @@ static NTSTATUS ClassifyV6Connect(const FWPS_INCOMING_VALUES0* inFixedValues, co
 
 	{
 		PBNOTIFICATION pbn = {0};
-		if (protocol == IPPROTO_TCP && (DestinationPortAllowed(remotePort) || SourcePortAllowed(localPort)))
+		if (PortExempt(protocol, localPort, remotePort))
 			action = 2;
+		else if (HttpPortBlocked(protocol, remotePort))
+			action = 0;
 		else
 			action = (int)CheckRanges6(&pbn, (const UCHAR*)remoteAddr);
 
@@ -324,8 +343,10 @@ static NTSTATUS ClassifyV6Accept(const FWPS_INCOMING_VALUES0* inFixedValues, con
 
 	{
 		PBNOTIFICATION pbn = {0};
-		if (protocol == IPPROTO_TCP && (DestinationPortAllowed(remotePort) || SourcePortAllowed(localPort)))
+		if (PortExempt(protocol, localPort, remotePort))
 			action = 2;
+		else if (HttpPortBlocked(protocol, remotePort))
+			action = 0;
 		else
 			action = (int)CheckRanges6(&pbn, (const UCHAR*)remoteAddr);
 

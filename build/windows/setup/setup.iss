@@ -44,7 +44,7 @@
 ; E.g. 1.0.1+
 ;#define app_ver_short str(PB_VER_MAJOR) + "." + str(PB_VER_MINOR) + "." + str(PB_VER_BUGFIX) + "+"
 
-#define copyright            "Copyright © 2009-2015, PeerBlock, LLC"
+#define copyright            "Copyright ï¿½ 2009-2015, PeerBlock, LLC"
 #define installer_build_date GetDateTimeString('mmm, d yyyy', '', '')
 #define quick_launch         "{userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock"
 #define sse_required
@@ -68,7 +68,6 @@ AppPublisher=PeerBlock, LLC
 AppCopyright={#copyright}
 AppPublisherURL=http://www.peerblock.com/
 AppSupportURL=http://www.peerblock.com/support
-AppUpdatesURL=http://www.peerblock.com/releases
 AppContact=http://www.peerblock.com/
 VersionInfoCompany=PeerBlock, LLC
 VersionInfoCopyright={#copyright}
